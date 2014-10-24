@@ -5,12 +5,9 @@ before_install:
   - sudo mkdir -p ~/Library/RubyMotion/build
   - sudo chown -R travis ~/Library/RubyMotion/build
   - sudo motion update
+  - bundle install
+  - bundle exec rake pod:install > pod_log.txt
 gemfile:
   - Gemfile
 script:
-  - bundle exec rake clean
-  - bundle install
-  - bundle exec rake pod:install > pod_log.txt
-script:
   - bundle exec rake spec
-  - bundle exec rake spec target=7.1
