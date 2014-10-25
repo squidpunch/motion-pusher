@@ -36,7 +36,12 @@ And create your first connection
       def initialize
         self.client = MotionPusherClient.new(self)
         client.connect
-        client.subscribe_to('cool-public-channel')
+        channel = client.subscribe_to('cool-public-channel')
+
+        channel.bindToEventNamed('new-message', handleWithBlock: -> (channel_event) {
+          puts channel_event.data['message']
+        })
+
       end
     end
 
