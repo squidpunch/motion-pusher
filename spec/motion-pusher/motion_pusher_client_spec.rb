@@ -101,6 +101,12 @@ describe MotionPusherClient do
 
         @channel.unsubscribe_called.should.be.true
       end
+
+      it "should not unsubscribe to channels that do not match the text" do
+        @client.unsubscribe_from('test-subscribed')
+
+        @channel.unsubscribe_called.should.be.nil
+      end
     end
   end
 end

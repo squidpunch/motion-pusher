@@ -21,7 +21,7 @@ class MotionPusherClient
 
   def unsubscribe_from(channel)
     channel = self.client.channelNamed(channel) if channel.is_a? String
-    channel.unsubscribe
+    channel.unsubscribe if channel
   end
 
   def config
