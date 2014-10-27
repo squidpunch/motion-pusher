@@ -1,49 +1,30 @@
 describe MotionPusherClient do
+  class FakePTPusher
+    def isConnected; true; end
+    def socketID; 1; end
+  end
+
+  class PTPusherChannel
+    attr_accessor :unsubscribe_called
+    def unsubscribe
+      self.unsubscribe_called = true
+    end
+  end
   class PTPusher
-    def self.pusherWithKey(key, delegate: delegate, encrypted: encrypted)
-      @_fake_key = key
-      @_fake_delegate = delegate
-      @_fake_encrypted = encrypted
-      PTPusher.new
-    end
-
-    def self.fake_key
-      @_fake_key
-    end
-
-    def self.fake_delegate
-      @_fake_delegate
-    end
-
-    def self.fake_encrypted
-      @_fake_encrypted
-    end
-
-    def self.fake_connected
-      @_fake_connected
-    end
-
-    def self.fake_connected=(value)
-      @_fake_connected = value
-    end
-
-    def self.fake_channel=(value)
-      @_fake_channel = value
-    end
-
-    def self.fake_channel
-      @_fake_channel
-    end
+    attr_accessor :subscribed_to
+    attr_accessor :fake_connection
 
     def connect
-      self.class.fake_connected = true
+      self.fake_connection = FakePTPusher.new
     end
 
-    def subscribeToChannelNamed(value)
-      self.class.fake_channel = value
+    def connection
+      self.fake_connection
     end
-    def subscribeToPrivateChannelNamed(value)
-      self.class.fake_channel = value
+
+    def subscribeToChannel(channel)
+      self.subscribed_to ||= []
+      subscribed_to << channel
     end
   end
 
@@ -54,37 +35,72 @@ describe MotionPusherClient do
 
   describe "initialize" do
     it "should pass the delegate to the PTPusher" do
-      PTPusher.fake_delegate.should == @delegate
-    end
-
-    it "should get the key from your app config" do
-      # from app.pusher in Rakefile
-      PTPusher.fake_key.should == 'my key'
-    end
-
-    it "should default encrypted to true" do
-      PTPusher.fake_encrypted.should.be.true
+      @client.client.delegate.should == @delegate
     end
   end
 
   describe "#connect" do
-    it "should connect to pusher" do
+    it "should connect the client" do
       @client.connect
-      PTPusher.fake_connected.should.be.true
+
+      @client.client.fake_connection.should.not.be.nil
     end
   end
 
   describe "#subscribe_to" do
-    it "should pass the subscription request to pusher" do
-      @client.subscribe_to('test-channel')
-      PTPusher.fake_channel.should == 'test-channel'
+    before do
+      @client.connect
+    end
+    it "should return the channel to the caller" do
+      @client.subscribe_to('test-subscribe').is_a?(PTPusherChannel).should.be.true
+    end
+    it "should be the channel we requested" do
+      @client.subscribe_to('test-subscribe').name.should == "test-subscribe"
+    end
+
+    it "should subscribe to the channel" do
+      channel = @client.subscribe_to('test-subscribe')
+      @client.client.subscribed_to.include?(channel).should.be.true
     end
   end
 
-  describe "#subscribe_to_private" do
-    it "should pass the subscription request to pusher" do
-      @client.subscribe_to_private('private-test-channel')
-      PTPusher.fake_channel.should == 'private-test-channel'
+  describe "#subscribe_to" do
+    before do
+      @client.connect
+    end
+    it "should return the channel to the caller" do
+      @client.subscribe_to_private('test-subscribe').is_a?(PTPusherChannel).should.be.true
+    end
+    it "should be the channel we requested" do
+      @client.subscribe_to_private('test-subscribe').name.should == "private-test-subscribe"
+    end
+
+    it "should subscribe to the channel" do
+      channel = @client.subscribe_to_private('test-subscribe')
+      @client.client.subscribed_to.include?(channel).should.be.true
+    end
+  end
+
+  describe "#unsubscribe_from" do
+    before do
+      @client.connect
+      @channel = @client.subscribe_to('test-subscribe')
+    end
+
+    context "when passing a channel object" do
+      it "should unsubscribe from the channel" do
+        @client.unsubscribe_from(@channel)
+
+        @channel.unsubscribe_called.should.be.true
+      end
+    end
+
+    context "when passing a string name for a channel" do
+      it "should unsubscribe from the channel" do
+        @client.unsubscribe_from('test-subscribe')
+
+        @channel.unsubscribe_called.should.be.true
+      end
     end
   end
 end

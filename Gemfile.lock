@@ -1,8 +1,8 @@
 PATH
   remote: .
   specs:
-    motion-pusher (0.0.1)
-      motion-cocoapods (~> 1.6.0)
+    motion-pusher (0.0.3)
+      motion-cocoapods (~> 1.6, >= 1.6.0)
 
 GEM
   remote: https://rubygems.org/

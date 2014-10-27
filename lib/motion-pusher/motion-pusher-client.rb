@@ -19,6 +19,11 @@ class MotionPusherClient
     client.subscribeToPrivateChannelNamed(channel)
   end
 
+  def unsubscribe_from(channel)
+    channel = self.client.channelNamed(channel) if channel.is_a? String
+    channel.unsubscribe
+  end
+
   def config
     @config ||= NSBundle.mainBundle.objectForInfoDictionaryKey('MotionPusher')
   end
