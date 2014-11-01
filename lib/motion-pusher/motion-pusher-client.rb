@@ -19,6 +19,10 @@ class MotionPusherClient
     client.subscribeToPrivateChannelNamed(channel)
   end
 
+  def subscribe_to_presence(channel)
+    client.subscribeToPresenceChannelNamed(channel)
+  end
+
   def unsubscribe_from(channel)
     channel = self.client.channelNamed(channel) if channel.is_a? String
     channel.unsubscribe if channel

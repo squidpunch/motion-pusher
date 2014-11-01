@@ -51,9 +51,11 @@ describe MotionPusherClient do
     before do
       @client.connect
     end
+
     it "should return the channel to the caller" do
       @client.subscribe_to('test-subscribe').is_a?(PTPusherChannel).should.be.true
     end
+
     it "should be the channel we requested" do
       @client.subscribe_to('test-subscribe').name.should == "test-subscribe"
     end
@@ -68,16 +70,34 @@ describe MotionPusherClient do
     before do
       @client.connect
     end
+
     it "should return the channel to the caller" do
-      @client.subscribe_to_private('test-subscribe').is_a?(PTPusherChannel).should.be.true
-    end
-    it "should be the channel we requested" do
-      @client.subscribe_to_private('test-subscribe').name.should == "private-test-subscribe"
+      @client.subscribe_to('test-subscribe').is_a?(PTPusherChannel).should.be.true
     end
 
     it "should subscribe to the channel" do
-      channel = @client.subscribe_to_private('test-subscribe')
+      channel = @client.subscribe_to('test-subscribe')
       @client.client.subscribed_to.include?(channel).should.be.true
+    end
+  end
+
+  describe "#subscribe_to_private" do
+    before do
+      @client.connect
+    end
+
+    it "should properly connect to a private channel without the `private-` prefix provided" do
+      @client.subscribe_to_private('test-subscribe').name.should == "private-test-subscribe"
+    end
+  end
+
+  describe "#subscribe_to_presence" do
+    before do
+      @client.connect
+    end
+
+    it "should properly connect to a presence channel without the `presence-` prefix provided" do
+      @client.subscribe_to_presence('test-subscribe').name.should == "presence-test-subscribe"
     end
   end
 

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    motion-pusher (0.0.3)
+    motion-pusher (0.0.4)
       motion-cocoapods (~> 1.6, >= 1.6.0)
 
 GEM
