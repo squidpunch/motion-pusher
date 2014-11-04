@@ -39,4 +39,3 @@ Motion::Project::App.setup do |app|
    app.pods.dependency 'libPusher', '~> 1.5'
    app.files.push(File.join(File.dirname(__FILE__), 'motion-pusher-client.rb'))
 end
-

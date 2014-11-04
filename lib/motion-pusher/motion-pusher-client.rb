@@ -5,6 +5,9 @@ class MotionPusherClient
       delegate: delegate,
       encrypted: true
     )
+    if self.config['authorization_url']
+      self.client.authorizationURL = NSURL.URLWithString(self.config['authorization_url'])
+    end
   end
 
   def connect
