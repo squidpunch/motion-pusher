@@ -36,6 +36,6 @@ end
 
 Motion::Project::App.setup do |app|
    app.pods ||= Motion::Project::CocoaPods.new(app)
-   app.pods.dependency 'libPusher', '~> 1.5'
+   app.pods.dependency 'libPusher', '~> 1.6'
    app.files.push(File.join(File.dirname(__FILE__), 'motion-pusher-client.rb'))
 end
