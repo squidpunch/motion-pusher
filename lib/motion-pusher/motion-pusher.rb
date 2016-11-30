@@ -35,7 +35,8 @@ module Motion
 end
 
 Motion::Project::App.setup do |app|
-   app.pods ||= Motion::Project::CocoaPods.new(app)
-   app.pods.dependency 'libPusher', '~> 1.6'
-   app.files.push(File.join(File.dirname(__FILE__), 'motion-pusher-client.rb'))
+  app.pods do
+    pod "libPusher", "~> 1.6.2"
+  end
+  app.files.push(File.join(File.dirname(__FILE__), "motion-pusher-client.rb"))
 end
